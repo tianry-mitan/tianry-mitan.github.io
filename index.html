@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tianry 的软件下载站 & 激活码生成器</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #0d1117;
+      color: #c9d1d9;
+    }
+    h1 { color: #58a6ff; font-size: 26px; text-align: center; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: #8b949e; font-size: 14px; margin-bottom: 30px; }
+
+    .app-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .app-name { font-size: 20px; font-weight: bold; color: #f0f6fc; margin-bottom: 4px; }
+    .version { color: #7ee787; font-size: 13px; margin-bottom: 8px; }
+    .app-desc { color: #8b949e; font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
+    .btn {
+      display: inline-block;
+      padding: 10px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 15px;
+      background: #238636;
+      color: white;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.8; }
+
+    .divider { border: none; border-top: 1px solid #30363d; margin: 30px 0; }
+
+    .section-title { font-size: 20px; color: #f0f6fc; margin-bottom: 16px; }
+    .activate-box {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .input-group { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .input-group input {
+      flex: 1;
+      min-width: 150px;
+      padding: 10px 14px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #c9d1d9;
+      font-size: 18px;
+      outline: none;
+      font-family: 'Courier New', monospace;
+    }
+    .input-group input:focus { border-color: #58a6ff; }
+    .input-group button {
+      padding: 10px 20px;
+      background: #1f6feb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .input-group button:hover { background: #388bfd; }
+    .result {
+      font-size: 20px;
+      font-weight: bold;
+      color: #7ee787;
+      word-break: break-all;
+      margin-top: 8px;
+    }
+    .formula { font-size: 13px; color: #8b949e; margin-bottom: 12px; }
+    .note { font-size: 13px; color: #8b949e; margin-top: 16px; border-left: 3px solid #d29922; padding-left: 12px; }
+
+    .footer { text-align: center; color: #484f58; font-size: 13px; margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <h1>📦 tianry 的激活站</h1>
+  <p class="subtitle"></p>
+
+  <hr class="divider">
+
+  <!-- 激活码生成器 -->
+  <div class="activate-box">
+    <div class="section-title">🔑 激活码生成器</div>
+    <p class="formula">
+      计算公式：激活码 = *****************|<br>
+      结果超出5位时，取前三位 + 后两位组成5位激活码。<br>
+      每个软件价格 1~2 元，购买后联系作者获取设备码并在此生成激活码。
+    </p>
+
+    <div class="input-group">
+      <input type="number" id="deviceCode" placeholder="输入5位设备码" maxlength="5" oninput="if(this.value.length>5) this.value=this.value.slice(0,5)">
+      <button onclick="generateCode()">生成激活码</button>
+    </div>
+
+    <div id="resultDisplay" class="result"></div>
+    <div class="note">
+      ⚠️ 激活码仅针对当前设备码一次性计算。请妥善保管。如需购买设备码或获取软件，请通过米坛社区联系作者。
+    </div>
+  </div>
+
+  <div class="footer">
+    powered by tianry · hosted on GitHub Pages
+  </div>
+
+  <script>
+    function generateCode() {
+      const input = document.getElementById('deviceCode').value.trim();
+      const resultDiv = document.getElementById('resultDisplay');
+      
+      if (!/^\d{5}$/.test(input)) {
+        resultDiv.textContent = '请输入恰好5位数字的设备码';
+        resultDiv.style.color = '#f85149';
+        return;
+      }
+
+      const x = parseInt(input, 10);
+      // 计算：x + x² + ∛x + x³ - 2
+      const sum = x + Math.pow(x, 2) + Math.cbrt(x) + Math.pow(x, 3) - 2;
+      const absSum = Math.abs(sum);
+      const intPart = Math.floor(absSum); // 取整数部分（忽略小数）
+
+      let code;
+      const str = intPart.toString();
+      if (str.length <= 5) {
+        // 不足5位前面补零
+        code = str.padStart(5, '0');
+      } else {
+        // 超过5位：取前三位 + 后两位
+        const firstThree = str.substring(0, 3);
+        const lastTwo = str.substring(str.length - 2);
+        code = firstThree + lastTwo;
+      }
+
+      resultDiv.textContent = '你的激活码：' + code;
+      resultDiv.style.color = '#7ee787';
+    }
+  </script>
+</body>
+</html>
